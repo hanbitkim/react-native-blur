@@ -54,7 +54,7 @@ class BlurViewManager extends SimpleViewManager<BlurringView> {
     }
 
     @ReactProp(name = "viewRef")
-    public void setViewRef(BlurringView view, int viewRef) {
+    public void setViewRef(final BlurringView view, final int viewRef) {
         UIManagerModule uiManager = context.getNativeModule(UIManagerModule.class);
         uiManager.prependUIBlock(new UIBlock() {
             @Override
