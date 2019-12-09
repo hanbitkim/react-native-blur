@@ -5,6 +5,9 @@ import android.view.View;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
+import com.facebook.react.uimanager.NativeViewHierarchyManager;
+import com.facebook.react.uimanager.UIBlock;
+import com.facebook.react.uimanager.UIManagerModule;
 
 import javax.annotation.Nonnull;
 
@@ -52,12 +55,19 @@ class BlurViewManager extends SimpleViewManager<BlurringView> {
 
     @ReactProp(name = "viewRef")
     public void setViewRef(BlurringView view, int viewRef) {
-        if (context != null && context.getCurrentActivity() != null) {
-          View viewToBlur = context.getCurrentActivity().findViewById(viewRef);
-
-          if (viewToBlur != null) {
-              view.setBlurredView(viewToBlur);
-          }
-        }
+        UIManagerModule uiManager = context.getNativeModule(UIManagerModule.class);
+        uiManager.prependUIBlock(new UIBlock() {
+            @Override
+            public void execute(NativeViewHierarchyManager nativeViewHierarchyManager) {
+                try {
+                    View viewToBlur = nativeViewHierarchyManager.resolveView(viewRef);
+                    view.setBlurredView(viewToBlur);
+                } 
+                catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        });
     }
 }
